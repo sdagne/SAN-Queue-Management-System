@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Counter Staff Portal | Queue Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f6fa;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+        }
+
+        .counter-info {
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 10px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .big-button {
+            width: 100%;
+            padding: 20px;
+            font-size: 1.3em;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-bottom: 15px;
+        }
+
+        .big-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .big-button:active {
+            transform: translateY(0);
+        }
+
+        .btn-call {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-complete {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .current-ticket {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .current-ticket .ticket-number {
+            font-size: 4em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .current-ticket .citizen-name {
+            font-size: 1.5em;
+            margin-bottom: 5px;
+        }
+
+        .result {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .result.success {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #28a745;
+        }
+
+        .result.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #dc3545;
+        }
+
+        .result.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 2px solid #17a2b8;
+        }
+
+        .queue-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .queue-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .queue-item .ticket-num {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .stat-card h3 {
+            font-size: 2.5em;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>Counter Staff Portal</h1>
+                <p>Ethiopia Queue Management System</p>
+            </div>
+            <div class="counter-info">
+                <h3>Counter <span id="counterNumber">1</span></h3>
+                <p id="staffName">Staff Member</p>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3 id="waitingCount">-</h3>
+                <p>Waiting</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="servedToday">-</h3>
+                <p>Served Today</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="avgWaitTime">-</h3>
+                <p>Avg Wait (min)</p>
+            </div>
+        </div>
+
+        <div class="current-ticket" id="currentTicketDisplay" style="display: none;">
+            <p style="font-size: 1.2em; margin-bottom: 10px;">NOW SERVING</p>
+            <div class="ticket-number" id="currentTicketNumber">-</div>
+            <div class="citizen-name" id="currentCitizenName">-</div>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h2>Queue Operations</h2>
+
+                <button class="big-button btn-call" onclick="callNextTicket()">
+                    CALL NEXT PERSON
+                </button>
+
+                <div class="input-group">
+                    <label>Verify Ticket</label>
+                    <input type="text" id="verifyTicketNumber" placeholder="Ticket Number (e.g., IM-001)">
+                </div>
+                <div class="input-group">
+                    <label>Verify ID</label>
+                    <input type="text" id="verifyIdNumber" placeholder="ID Number">
+                </div>
+                <button class="big-button btn-verify" onclick="verifyTicket()">
+                    VERIFY ID
+                </button>
+
+                <div class="input-group">
+                    <label>Complete Service</label>
+                    <input type="text" id="completeTicketNumber" placeholder="Ticket Number">
+                </div>
+                <button class="big-button btn-complete" onclick="completeService()">
+                    MARK AS COMPLETED
+                </button>
+
+                <div class="result" id="operationResult"></div>
+            </div>
+
+            <div class="card">
+                <h2>Waiting Queue</h2>
+                <div class="queue-list" id="queueList">
+                    <p style="text-align: center; color: #999;">Loading queue...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000';
+        const COUNTER_ID = 1;
+
+        // Auto-refresh queue and stats every 5 seconds
+        setInterval(() => {
+            refreshQueue();
+            refreshStats();
+        }, 5000);
+
+        // Initial load
+        refreshQueue();
+        refreshStats();
+
+        async function callNextTicket() {
+            showResult('Calling next ticket...', 'info');
+
+            try {
+                const response = await fetch(`${API_BASE}/api/counters/${COUNTER_ID}/call-next`, {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    if (data.ticket_number) {
+                        showCurrentTicket(data.ticket_number, data.full_name);
+                        document.getElementById('verifyTicketNumber').value = data.ticket_number;
+                        document.getElementById('verifyIdNumber').value = '';
+                        showResult(`✅ Now serving: ${data.ticket_number} - ${data.full_name}`, 'success');
+                    } else {
+                        showResult('ℹ️ No tickets waiting in queue', 'info');
+                        hideCurrentTicket();
+                    }
+                    refreshQueue();
+                    refreshStats();
+                } else {
+                    showResult(`❌ ${data.detail}`, 'error');
+                }
+            } catch (error) {
+                showResult('❌ Cannot connect to server', 'error');
+            }
+        }
+
+        async function verifyTicket() {
+            const ticketNumber = document.getElementById('verifyTicketNumber').value.trim();
+            const idNumber = document.getElementById('verifyIdNumber').value.trim();
+
+            if (!ticketNumber || !idNumber) {
+                showResult('❌ Please enter both ticket number and ID number', 'error');
+                return;
+            }
+
+            showResult('Verifying ticket...', 'info');
+
+            try {
+                const response = await fetch(`${API_BASE}/api/counters/${COUNTER_ID}/verify`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        ticket_number: ticketNumber,
+                        id_number: idNumber
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showResult(`✅ Verification successful for ${ticketNumber}`, 'success');
+                    document.getElementById('completeTicketNumber').value = ticketNumber;
+                } else {
+                    let errorMessage = 'Unknown error';
+
+                    // Try different ways to extract error message
+                    if (typeof data === 'object' && data !== null) {
+                        if (data.detail) {
+                            errorMessage = typeof data.detail === 'string' ? data.detail : String(data.detail);
+                        } else if (data.message) {
+                            errorMessage = typeof data.message === 'string' ? data.message : String(data.message);
+                        } else if (data.error) {
+                            errorMessage = typeof data.error === 'string' ? data.error : String(data.error);
+                        } else {
+                            errorMessage = 'Verification failed';
+                        }
+                    }
+
+                    showResult(`❌ ${errorMessage}`, 'error');
+                    console.error('Verify ticket error:', data);
+                }
+            } catch (error) {
+                showResult(`❌ Verification failed: ${error.message}`, 'error');
+                console.error('Verify ticket exception:', error);
+            }
+        }
+
+        async function completeService() {
+            const ticketNumber = document.getElementById('completeTicketNumber').value.trim() ||
+                                 document.getElementById('currentTicketNumber').textContent;
+
+            if (!ticketNumber || ticketNumber === '-') {
+                showResult('❌ No ticket is currently being served', 'error');
+                return;
+            }
+
+            showResult('Completing service...', 'info');
+
+            try {
+                const url = `${API_BASE}/api/counters/${COUNTER_ID}/complete?ticket_number=${encodeURIComponent(ticketNumber)}`;
+
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    hideCurrentTicket();
+                    document.getElementById('verifyTicketNumber').value = '';
+                    document.getElementById('verifyIdNumber').value = '';
+                    document.getElementById('completeTicketNumber').value = '';
+                    showResult(`✅ Service completed for ${ticketNumber}`, 'success');
+                    refreshQueue();
+                    refreshStats();
+                } else {
+                    let errorMessage = 'Unknown error';
+
+                    // Try different ways to extract error message
+                    if (typeof data === 'object' && data !== null) {
+                        if (data.detail) {
+                            errorMessage = typeof data.detail === 'string' ? data.detail : String(data.detail);
+                        } else if (data.message) {
+                            errorMessage = typeof data.message === 'string' ? data.message : String(data.message);
+                        } else if (data.error) {
+                            errorMessage = typeof data.error === 'string' ? data.error : String(data.error);
+                        } else {
+                            errorMessage = 'Service completion failed';
+                        }
+                    }
+
+                    showResult(`❌ ${errorMessage}`, 'error');
+                    console.error('Complete service error:', data);
+                }
+            } catch (error) {
+                showResult(`❌ Error completing service: ${error.message}`, 'error');
+                console.error('Complete service exception:', error);
+            }
+        }
+
+        async function refreshQueue() {
+            try {
+                const response = await fetch(`${API_BASE}/api/display/queue-status`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    displayQueue(data);
+                }
+            } catch (error) {
+                console.error('Failed to refresh queue:', error);
+            }
+        }
+
+        async function refreshStats() {
+            try {
+                const response = await fetch(`${API_BASE}/api/statistics`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    document.getElementById('waitingCount').textContent = data.total_waiting;
+                    document.getElementById('servedToday').textContent = data.total_served_today;
+                    document.getElementById('avgWaitTime').textContent =
+                        data.average_service_time_minutes > 0 ?
+                        Math.round(data.average_service_time_minutes) : '-';
+                }
+            } catch (error) {
+                console.error('Failed to refresh stats:', error);
+            }
+        }
+
+        function displayQueue(data) {
+            const queueList = document.getElementById('queueList');
+
+            if (!data.now_serving || data.now_serving.length === 0) {
+                queueList.innerHTML = '<p style="text-align: center; color: #999;">No tickets in queue</p>';
+                return;
+            }
+
+            let html = '';
+            data.now_serving.forEach(ticket => {
+                html += `
+                    <div class="queue-item">
+                        <div>
+                            <div class="ticket-num">${ticket.ticket_number}</div>
+                            <div style="color: #666; font-size: 0.9em;">Status: ${ticket.status}</div>
+                        </div>
+                        <div style="text-align: right;">
+                            ${ticket.counter_number ? `<strong>Counter ${ticket.counter_number}</strong>` : 'Waiting'}
+                        </div>
+                    </div>
+                `;
+            });
+
+            queueList.innerHTML = html || '<p style="text-align: center; color: #999;">No tickets</p>';
+        }
+
+        function showCurrentTicket(ticketNumber, citizenName) {
+            document.getElementById('currentTicketDisplay').style.display = 'block';
+            document.getElementById('currentTicketNumber').textContent = ticketNumber;
+            document.getElementById('currentCitizenName').textContent = citizenName;
+        }
+
+        function hideCurrentTicket() {
+            document.getElementById('currentTicketDisplay').style.display = 'none';
+        }
+
+        function showResult(message, type) {
+            const resultDiv = document.getElementById('operationResult');
+            resultDiv.textContent = message;
+            resultDiv.className = `result ${type}`;
+            resultDiv.style.display = 'block';
+
+            if (type === 'success') {
+                setTimeout(() => {
+                    resultDiv.style.display = 'none';
+                }, 5000);
+            }
+        }
+    </script>
+</body>
+</html>
+

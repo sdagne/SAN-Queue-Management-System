@@ -1,0 +1,38 @@
+# Queue Management System - Dependencies
+
+# Backend API Framework
+fastapi>=0.100.0
+uvicorn[standard]>=0.23.0
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
+
+# Database
+sqlalchemy>=2.0.0
+alembic>=1.12.0
+
+# Security & Authentication
+python-jose[cryptography]>=3.3.0
+passlib[bcrypt]>=1.7.4
+python-multipart>=0.0.6
+
+# ID & QR Code Generation
+qrcode[pil]>=7.4.0
+Pillow>=10.0.0
+
+# Utilities
+python-dotenv>=1.0.0
+httpx>=0.25.0
+
+# Optional: For thermal printer support
+python-escpos>=3.0
+
+# Optional: For OCR ID scanning
+pytesseract>=0.3.10
+
+# Development
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+
+
+
+
