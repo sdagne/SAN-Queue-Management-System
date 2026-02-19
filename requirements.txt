@@ -1,25 +1,10 @@
 # Queue Management System - Dependencies
-import os
-import uvicorn
-
-port = int(os.environ.get("PORT", 10000))
-
-uvicorn.run(
-    "main:app",   # replace main:app if your filename differs
-    host="0.0.0.0",
-    port=port
-)
-
 # Backend API Framework
 fastapi>=0.100.0
 uvicorn[standard]>=0.23.0
 pydantic>=2.0.0
 pydantic-settings>=2.0.0
 gunicorn==21.2.0
-
-Django==5.0.6
-whitenoise==6.6.0
-
 
 # Database
 sqlalchemy>=2.0.0
@@ -50,4 +35,3 @@ pytest-asyncio>=0.21.0
 
 # Render Deployment
 psycopg2-binary==2.9.9
-
