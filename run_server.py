@@ -17,13 +17,13 @@ if __name__ == "__main__":
     print(f"📊 Alternative Docs: http://localhost:{settings.port}/redoc")
     print("\nPress CTRL+C to stop the server\n")
     print("=" * 60)
-    
+
+    port = int(os.environ.get("PORT", 10000))
+
     uvicorn.run(
         "main:app",
-       # host=settings.host,
         host="0.0.0.0",
-        port=settings.port,
-        reload=True,
-        log_level="info"
+        port=port,
+        reload=True
     )
 

@@ -23,14 +23,35 @@ from utils import (
 from config import settings
 from auth import require_role
 import os
-
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 # Initialize FastAPI app
 app = FastAPI(
     title=settings.app_name,
     version=settings.version,
-    description="Personalized Queue Management System for Ethiopia"
+    description="Personalized Queue Management System"
 )
+# ================= STATIC FILES =================
+# Serve the entire web_portals folder at /web
+app.mount("/web", StaticFiles(directory="web_portals"), name="web")
 
+# ================= TEMPLATES =================
+# For dynamic HTML rendering using Jinja2
+templates = Jinja2Templates(directory="web_portals")
+
+# ================= ROUTES =================
+# Serve main page at root /
+@app.get("/", response_class=HTMLResponse)
+async def root(request: Request):
+    # Use this if you want dynamic content
+    return templates.TemplateResponse("index.html", {"request": request})
+
+# Optional: example route for dashboard.html
+@app.get("/dashboard", response_class=HTMLResponse)
+async def dashboard(request: Request):
+    return templates.TemplateResponse("dashboard.html", {"request": request})
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
