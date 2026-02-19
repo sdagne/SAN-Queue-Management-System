@@ -1,4 +1,4 @@
-# 🇪🇹 Queue Management System - Ethiopia
+# SAN Queue Management System
 
 A secure, personalized ticketing and queue management system designed specifically for Ethiopia, preventing ticket reselling and improving public service efficiency.
 
