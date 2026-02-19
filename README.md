@@ -76,8 +76,12 @@ Queue Management Standard/
 ├── config.py              # Configuration settings
 ├── requirements.txt       # Python dependencies
 ├── .env.example          # Environment variables template
-└── README.md             # This file
+├── web_portals/          # HTML portals for public information
+└── notes/                # Archived notes and documents
 ```
+
+- `web_portals/` contains HTML files for public information access.
+- `notes/` contains archived notes and documents. This folder is ignored in GitHub pushes.
 
 ## 💾 Database Schema
 
@@ -204,4 +208,3 @@ For questions or support, please contact the development team.
 ---
 
 **Built for Ethiopia 🇪🇹 | Making Public Services Fair and Efficient**
-
